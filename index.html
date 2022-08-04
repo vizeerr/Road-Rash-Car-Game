@@ -151,7 +151,7 @@
         const source2 = audioContext2.createMediaElementSource(audio2);
         source2.connect(audioContext2.destination)
         
-        let player= {ownspeed : 2,speed :2, score:0, cars:3};
+        let player= {ownspeed : 2,speed :3, score:0, cars:3};
         let keys ={ArrowUP : false,ArrowDown :false, ArrowLeft:false, ArrowRight:false};
         
         document.addEventListener('keydown',keyDown);
@@ -179,7 +179,7 @@
             menu.style.display = "none";
             gameArea.innerHTML="<div class='startline'> </div>";
             score.style.display="block";
-            player.speed = 2;
+            player.speed = 3;
             player.ownspeed=2;
 
             //lines on road
@@ -293,15 +293,20 @@
                 window.requestAnimationFrame(gamePlay);
                 player.score++;
                 score.innerText = "SCORE : " + player.score;
-                if(player.score>500){ 
+                if(player.score>300){ 
                     player.speed = 3;
+                    player.ownspeed = 2.2
+                }
+                if(player.score>500){ 
+                    player.speed = 3.5;
                 }
                 if(player.score>800){
                     player.speed= 4;
-                    player.ownspeed = 2;
+                    player.ownspeed = 2.3;
                 }
                 if(player.score>1200){
                     player.speed= 4.5;
+                    player.ownspeed = 2.4;
                 }
                 if(player.score>1500){
                     player.speed= 5;
@@ -309,10 +314,11 @@
                 }
                 if(player.score>2000){
                     player.speed= 5.5;
+                    player.ownspeed = 2.6;
                 }
                 if(player.score>2500){
                     player.speed= 6;
-                    player.ownspeed = 2.5;
+                    player.ownspeed = 2.7;
                 }
                 if(player.score>3000){
                     player.speed= 6.5;
@@ -320,12 +326,22 @@
                 }
                 if(player.score>3500){
                     player.speed= 7;
-                    player.ownspeed = 2.8;
+                    player.ownspeed = 2.9;
                     
                 }
                 if(player.score>4000){
                     player.speed= 7.5;
-                    player.ownspeed = 2.8;
+                    player.ownspeed = 3;
+                    
+                }
+                if(player.score>45400){
+                    player.speed= 8;
+                    player.ownspeed = 3.5;
+                    
+                }
+                if(player.score>5000){
+                    player.speed= 8.5;
+                    player.ownspeed = 4;
                     
                 }
                 
