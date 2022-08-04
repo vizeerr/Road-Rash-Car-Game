@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road Rash Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@200&display=swap" rel="stylesheet">
+
+<style>
+        *{margin: 0; padding: 0;font-family: 'Public Sans', sans-serif;}
+
+        .body{
+            width:100%;
+            height:100vh;
+            background-image: url('images/background.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .car{
+            width: 55px;
+            height: 123px;
+            position: absolute;
+            left:208px;
+            top: 600px;
+            background-image: url(images/car1.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+
+        }
+
+        .ecar{
+            width: 55px;
+            height: 123px;
+            position: absolute;
+            background-image: url(images/car1.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        .lines{
+            width :10px;
+            height: 100px;
+            background: #ffffff;
+            position: absolute;
+            left:225px;
+        }
+
+        .gameArea{
+            width: 30%;
+            height: 100vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            background: #0d0d0d;
+            position: absolute;
+            overflow: hidden;
+            border-right: 7px dashed #c8d6e5;
+            border-left: 7px dashed #c8d6e5;
+        }
+        .menu{
+            width: 35%;
+            margin: 0 auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            text-align: center;
+            background-color: rgb(0, 0, 0);
+            border-radius: 12px;
+            box-shadow: -5px 9px 20px 0px rgb(0 0 0 / 41%);
+            z-index: 1;
+        }
+        .container{
+            margin: 35px 0px;
+        }
+        .container h3{
+            color: #ffd600;
+            font-size: 25px;
+        }
+        .container p{
+            color: red;
+            font-size: 15px;
+        }
+        .btn{
+            background-color: #ffd600;
+            border-radius: 30px;
+            border: none;
+            color: #000;
+            padding: 7px 29px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 17px;
+            transition: 0.5s ease;
+            cursor: pointer;
+        }
+        .score{
+            background: #ffd600;
+            width: 17%;
+            border-radius: 15px;
+            box-shadow: -5px 9px 20px 0px rgb(0 0 0 / 41%);
+            position: absolute;
+            top: 70px;
+            left: 120px;
+            text-align: center;
+            padding: 30px 0px;
+            font-size: 22px;
+            display: none;
+            color: #000;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="body">
+
+        <audio class = "audio" src='audio/racesound.mp3'></audio>
+        <audio class = "audio2" src='audio/crash.mp3'></audio>
+
+        <div class="score"></div>
+        <div class="menu">
+            <div class="container">
+                <h3 class = "heading">Click On Start To Start Game</h3><br>
+                <p>Use Arrow Keys to Move (Up/Down/Left/Right)</p><br>
+                <button class=" btn"> START </button>
+            </div>
+        </div>
+        <div class="gameArea">
+            
+        </div>
+    </div>
+    
+    <script>
+
+        const score = document.querySelector('.score');
+        const gameArea = document.querySelector('.gameArea');
+        const btn = document.querySelector('.btn');
+        const menu = document.querySelector('.menu');
+        const heading = document.querySelector('.heading');
+        btn.addEventListener('click',start);
+
+        const audioContext = new AudioContext();
+        const audio = document.querySelector('.audio');
+        const source = audioContext.createMediaElementSource(audio);
+        source.connect(audioContext.destination)
+
+        const audioContext2 = new AudioContext();
+        const audio2 = document.querySelector('.audio2');
+        const source2 = audioContext2.createMediaElementSource(audio2);
+        source2.connect(audioContext2.destination)
+        
+        let player= {ownspeed : 2,speed :2, score:0, cars:3};
+        let keys ={ArrowUP : false,ArrowDown :false, ArrowLeft:false, ArrowRight:false};
+        
+        document.addEventListener('keydown',keyDown);
+        document.addEventListener('keyup',keyUp);
+        
+        function keyDown(e){
+            e.preventDefault();
+            //e.key = to know about which key is pressed
+            keys[e.key] = true;
+        }
+        
+        function keyUp(e){
+            e.preventDefault();
+            keys[e.key] = false;
+        }
+        
+        function start(){
+            //for initializing animation frame
+            window.requestAnimationFrame(gamePlay);
+            audio.play();
+            audio.loop = true;
+            
+            player.start = true;
+            player.score = 0;
+            menu.style.display = "none";
+            gameArea.innerHTML="<div class='startline'> </div>";
+            score.style.display="block";
+            player.speed = 2;
+            player.ownspeed=2;
+
+            //lines on road
+            for( var i=0; i<5; i++){
+                let lines = document.createElement('div');
+                lines.setAttribute('class','lines');
+                lines.y = (i*150);
+                lines.style.top= lines.y + "px";
+                gameArea.appendChild(lines);
+            }
+            
+            let car = document.createElement('div');
+            car.setAttribute('class','car');
+            gameArea.appendChild(car);
+            
+            player.x = car.offsetLeft;
+            player.y = car.offsetTop;
+
+            // enemy car
+            
+            for( var i=0; i<player.cars; i++){
+                let ecar = document.createElement('div');
+                ecar.setAttribute('class','ecar');
+                ecar.y = -(i*300);
+                ecar.style.top= ecar.z + "px";
+                ecar.style.backgroundImage=randomimg();
+                var le = (Math.floor(Math.random()*396));
+                console.log(le);
+                ecar.style.left = le + "px";         
+                gameArea.appendChild(ecar);
+            }
+
+        }
+        img=["car2.png","car3.png","car4.png","car5.png","car6.png","car7.png"];
+        function randomimg(){
+            let randomno = Math.floor(Math.random()*(img.length));
+            iname = img[randomno];
+            return `url(images/${iname})`;
+        }
+        
+        function collison(a,b){
+            aRect = a.getBoundingClientRect();
+            bRect = b.getBoundingClientRect();
+            
+            if((aRect.top +10> bRect.bottom) || (aRect.bottom < bRect.top+20) || (aRect.right < bRect.left+5) 
+            || (aRect.left+5> bRect.right)){
+                
+                return true;
+            }
+        }
+    
+        function movelines(){
+            let lines = document.querySelectorAll('.lines');
+            lines.forEach(function(item){
+                if(item.y > 700){
+                    item.y-=750;
+                }
+                item.y += player.speed;
+                item.style.top= item.y + "px";
+            })
+        }
+        
+
+        function moveecar(c){
+            let ecar = document.querySelectorAll('.ecar');
+            ecar.forEach(function(item,value){
+                
+                if(!(collison(c,item))){
+                    heading.innerText = "GAME OVER Your score is "+ player.score;
+                    btn.innerText =  "Try Again";
+                    endgame();
+                    audio2.play(); 
+                    audio.pause();
+                }
+
+                if(item.y > 750){
+                    item.y= -100;
+                    item.style.left = Math.floor(Math.random()*396) + "px"; 
+                }
+                item.y += player.speed;
+                item.style.top= item.y + "px";
+            })    
+        }
+        
+        
+        function gamePlay(){
+            
+            let road = gameArea.getBoundingClientRect();
+            let car = document.querySelector('.car');
+            
+            if (player.start == true){
+                
+                movelines();
+                moveecar(car);
+
+                //adding fn for keypress and key down
+                if(keys.ArrowUp && player.y > (road.top +30)){
+                    player.y -= player.ownspeed; 
+                }if(keys.ArrowDown && player.y <(road.bottom - 150)){
+                    player.y += player.ownspeed;
+                }if(keys.ArrowLeft && player.x > 10){
+                    player.x -= player.ownspeed;
+                }if(keys.ArrowRight && player.x < (road.width - 80)){
+                    player.x += player.ownspeed;
+                }
+                
+                car.style.top = player.y + "px";
+                car.style.left = player.x + "px";
+                
+                //for continous animation frame
+                window.requestAnimationFrame(gamePlay);
+                player.score++;
+                score.innerText = "SCORE : " + player.score;
+                if(player.score>500){ 
+                    player.speed = 3;
+                }
+                if(player.score>800){
+                    player.speed= 4;
+                    player.ownspeed = 2;
+                }
+                if(player.score>1200){
+                    player.speed= 4.5;
+                }
+                if(player.score>1500){
+                    player.speed= 5;
+                    player.ownspeed = 2.5;
+                }
+                if(player.score>2000){
+                    player.speed= 5.5;
+                }
+                if(player.score>2500){
+                    player.speed= 6;
+                    player.ownspeed = 2.5;
+                }
+                if(player.score>3000){
+                    player.speed= 6.5;
+                    player.ownspeed = 2.8;
+                }
+                if(player.score>3500){
+                    player.speed= 7;
+                    player.ownspeed = 2.8;
+                    
+                }
+                if(player.score>4000){
+                    player.speed= 7.5;
+                    player.ownspeed = 2.8;
+                    
+                }
+                
+            }
+        }
+
+        function endgame(){
+            player.start = false;
+            menu.style.display = "block";   
+            score.style.display="none";
+            
+        }
+        
+        </script>
+</body>
+</html>
