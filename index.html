@@ -121,13 +121,40 @@
         .tag p{
             margin: 12px;
         }
+
+        .allow{
+            background-color: #ffd600;
+            border-radius: 30px;
+            border: none;
+            color: #000;
+            padding: 7px 29px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 17px;
+            transition: 0.5s ease;
+            cursor: pointer;
+            margin: 28PX 30px;
+            
+        }
         
+        .ask{
+            position: absolute;
+            top: 180px;
+            left: 150px;
+            background-color: rgb(0, 0, 0);
+            border-radius: 12px;
+            box-shadow: -5px 9px 20px 0px rgb(0 0 0 / 41%);
+            z-index: 1;
+            display: none;
+        }
 
     </style>
 </head>
 <body>
     <div class="body">
-
+        <div class="ask"> 
+            <button class="allow"> Allow Voice</button>
+        </div>
         <audio class = "audio" src='audio/racesound.mp3'></audio>
         <audio class = "audio2" src='audio/crash.mp3'></audio>
         <div class="tag"> <p> Copyright © Vivek Sagar</p></div>
@@ -156,12 +183,12 @@
         const audioContext = new AudioContext();
         const audio = document.querySelector('.audio');
         const source = audioContext.createMediaElementSource(audio);
-        source.connect(audioContext.destination)
-
+        source.connect(audioContext.destination);
+        
         const audioContext2 = new AudioContext();
         const audio2 = document.querySelector('.audio2');
         const source2 = audioContext2.createMediaElementSource(audio2);
-        source2.connect(audioContext2.destination)
+        source2.connect(audioContext2.destination);
         
         let player= {ownspeed : 2,speed :3, score:0, cars:3};
         let keys ={ArrowUP : false,ArrowDown :false, ArrowLeft:false, ArrowRight:false};
@@ -179,13 +206,32 @@
             e.preventDefault();
             keys[e.key] = false;
         }
+
+
+        var promise = document.querySelector('audio').play();
         
+        var ask = document.querySelector('.ask');
+        if (promise !== undefined) {
+            promise.then(_ => {
+                ask.style.display="none";
+          }).catch(error => {
+            ask.style.display="block";
+          }); 
+        };
+        
+        document.querySelector('.allow').addEventListener('click', function() {
+        audioContext.resume().then(() => {
+        console.log('Playback resumed successfully');
+        console.log(audioContext.state);
+        window.location.reload();
+        }); });
+
+
         function start(){
             //for initializing animation frame
             window.requestAnimationFrame(gamePlay);
             audio.play();
             audio.loop = true;
-            
             player.start = true;
             player.score = 0;
             menu.style.display = "none";
