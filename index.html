@@ -28,6 +28,7 @@
             background-image: url(images/car1.png);
             background-repeat: no-repeat;
             background-size: cover;
+           
 
         }
 
@@ -49,7 +50,7 @@
         }
 
         .gameArea{
-            width: 30%;
+            width: 461px;
             height: 100vh;
             top: 50%;
             left: 50%;
@@ -264,7 +265,7 @@
                 ecar.y = -(i*300);
                 ecar.style.top= ecar.z + "px";
                 ecar.style.backgroundImage=randomimg();
-                var le = (Math.floor(Math.random()*396));
+                var le = (Math.floor(Math.random()*398));
                 console.log(le);
                 ecar.style.left = le + "px";         
                 gameArea.appendChild(ecar);
@@ -315,7 +316,7 @@
 
                 if(item.y > 750){
                     item.y= -100;
-                    item.style.left = Math.floor(Math.random()*396) + "px"; 
+                    item.style.left = Math.floor(Math.random()*398) + "px"; 
                 }
                 item.y += player.speed;
                 item.style.top= item.y + "px";
@@ -372,11 +373,11 @@
                 }
                 if(player.score>2000){
                     player.speed= 5.5;
-                    player.ownspeed = 3.2;
+                    player.ownspeed = 3.5;
                 }
                 if(player.score>2500){
                     player.speed= 6;
-                    player.ownspeed = 3.5;
+                    player.ownspeed = 3.7;
                 }
                 if(player.score>3000){
                     player.speed= 6.5;
@@ -389,10 +390,10 @@
                 }
                 if(player.score>4000){
                     player.speed= 7.5;
-                    player.ownspeed = 4.2;
+                    player.ownspeed = 4;
                     
                 }
-                if(player.score>45400){
+                if(player.score>4500){
                     player.speed= 8;
                     player.ownspeed = 4.5;
                     
@@ -414,14 +415,20 @@
                 }
                 if(player.score>7000){
                     player.speed= 10;
-                    player.ownspeed = 6.5;
+                    player.ownspeed = 7;
                     
                 }
                 if(player.score>8000){
                     player.speed= 11;
-                    player.ownspeed = 7;
+                    player.ownspeed = 8;
                     
                 }
+                if(player.score>9000){
+                    player.speed= 12;
+                    player.ownspeed = 9;
+                    
+                }
+
                 
             }
         }
@@ -432,6 +439,10 @@
             score.style.display="none";
             
         }
+
+        document.addEventListener("contextmenu", function (e){
+    e.preventDefault();
+}, false);
         
         </script>
 </body>
